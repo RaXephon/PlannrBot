@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Planner Bot</title>
+</head>
+
+<link href="https://fonts.googleapis.com/css?family=Quicksand|Nunito" rel="stylesheet">
+
+<style>
+
+body{
+	background-color: #f1f1f1;
+}
+
+#demo {
+	padding-top: 150px;
+	font-size: 50px;
+	font-family: 'Quicksand', sans-serif;
+	padding-left: 250px;
+	padding-right: 250px;
+	color: black;
+	text-align: center;
+
+}
+
+</style>
+<body>
+
+	<p id="demo"></p>
+
+	<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+	<script type="text/javascript" src="artyom.window.min.js"></script>
+	<script>
+
+		var artyom = new Artyom();
+
+		artyom.addCommands({
+			smart:true,
+			indexes: ["*"],
+			action: function(i, wildcard) {
+				makeRequest("/input?chunk=" + wildcard);
+			}
+		});
+
+		artyom.when("SPEECH_SYNTHESIS_END", function(){ artyom.ArtyomWebkitSpeechRecognition.abort(); });
+
+		artyom.initialize({
+			lang:"en-US",
+			continuous: true,
+			listen:true,
+			speed: 1,
+			mode:"normal"
+		});
+
+		function makeRequest(link) {
+			$.getJSON( link , function( json ) {
+				artyom.say(json.response);
+				append_to_text(json.render_this);
+			});
+		}
+
+		function append_to_text(phrase) {
+			document.getElementById("demo").innerHTML = phrase;
+		}
+
+
+	</script>
+</body>
+</html>
